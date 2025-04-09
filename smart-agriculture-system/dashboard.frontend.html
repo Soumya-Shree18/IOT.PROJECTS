@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Waste Dashboard</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { padding: 10px; border: 1px solid #ddd; }
+  </style>
+</head>
+<body>
+  <h1>Smart Waste Bin Status - Bhubaneswar</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Bin ID</th>
+        <th>Location</th>
+        <th>Fill Level (%)</th>
+        <th>Last Updated</th>
+      </tr>
+    </thead>
+    <tbody id="binTable">
+    </tbody>
+  </table>
+
+  <script>
+    async function loadBins() {
+      const res = await fetch('http://localhost:5000/api/bins');
+      const bins = await res.json();
+
+      let tableHTML = '';
+      bins.forEach(bin => {
+        tableHTML += `
+          <tr>
+            <td>${bin.bin_id}</td>
+            <td>${bin.location}</td>
+            <td>${bin.fill_level}%</td>
+            <td>${new Date(bin.timestamp).toLocaleString()}</td>
+          </tr>
+        `;
+      });
+      document.getElementById('binTable').innerHTML = tableHTML;
+    }
+
+    setInterval(loadBins, 5000);  // refresh every 5 seconds
+    loadBins();
+  </script>
+</body>
+</html>
